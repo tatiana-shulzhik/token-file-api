@@ -47,7 +47,7 @@ docker compose up -d
 **Тело запроса:**:
 ```json
 {
-    "email": "е@gmail.com",
+    "login": "е@gmail.com",
     "password": "Password1!"
 }
 ```
@@ -74,7 +74,7 @@ docker compose up -d
 **Тело запроса:**:
 ```json
 {
-    "email": "е@gmail.com",
+    "login": "е@gmail.com",
     "password": "Password1!"
 }
 ```

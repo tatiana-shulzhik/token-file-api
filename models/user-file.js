@@ -6,7 +6,7 @@ module.exports = (sequelize) => {
 
   UserFile.init({
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     fileId: {

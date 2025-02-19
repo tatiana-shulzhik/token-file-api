@@ -4,14 +4,14 @@ const authDto = require('../dtos/auth.dto');
 const { refreshTokenValidationDto } = require('../dtos/token-validation.dto');
 
 exports.register = async (req, res) => {
-    const { email, password } = req.body;
-    const { error } = authDto.validate({ email, password });
+    const { login, password } = req.body;
+    const { error } = authDto.validate({ login, password });
 
     if (error) {
         return responseHelper.sendResponse(res, 400, 'Ошибка валидации', { error: error.details[0].message });
     }
 
-    const result = await authService.registerUser(email, password);
+    const result = await authService.registerUser(login, password);
 
     if (result.error) {
         return responseHelper.sendResponse(res, 400, 'Ошибка регистрации', { error: result.error });
@@ -21,17 +21,17 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-    const { email, password } = req.body;
-    const { error } = authDto.validate({ email, password });
+    const { login, password } = req.body;
+    const { error } = authDto.validate({ login, password });
 
     if (error) {
         return responseHelper.sendResponse(res, 400, 'Ошибка валидации', { error: error.details[0].message });
     }
 
-    const result = await authService.loginUser(email, password);
+    const result = await authService.loginUser(login, password);
 
     if (!result) {
-        return responseHelper.sendResponse(res, 401, 'Неверный email или пароль');
+        return responseHelper.sendResponse(res, 401, 'Неверный логин или пароль');
     }
 
     return responseHelper.sendResponse(res, 200, 'Успешный вход', {

@@ -5,16 +5,16 @@ const User = require('../models/user')(sequelize);
 const Session = require('../models/session')(sequelize);
 const config = require('../config/app-config');
 
-exports.registerUser = async (email, password) => {
+exports.registerUser = async (login, password) => {
   try {
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await User.findOne({ where: { id: login  } });
     if (existingUser) {
-      return { message: 'Ошибка регистрации', error: 'Email уже зарегистрирован' };
+      return { message: 'Ошибка регистрации', error: 'login уже зарегистрирован' };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({ email, password: hashedPassword });
+    const user = await User.create({ id: login, password: hashedPassword });
 
     return { message: 'Пользователь успешно зарегистрирован', userId: user.id };
   } catch (error) {
@@ -23,8 +23,8 @@ exports.registerUser = async (email, password) => {
   }
 };
 
-exports.loginUser = async (email, password) => {
-  const user = await User.findOne({ where: { email } });
+exports.loginUser = async (login, password) => {
+  const user = await User.findOne({ where: { id: login } });
   if (!user) return null;
 
   const validPassword = await bcrypt.compare(password, user.password);
@@ -80,7 +80,7 @@ exports.refreshAccessToken = async (refreshToken) => {
 };
 
 exports.getUserProfile = async (userId) => {
-  return User.findByPk(userId, { attributes: ['id', 'email'] });
+  return User.findByPk(userId, { attributes: ['id'] });
 };
 
 exports.logout = async (refreshToken) => {
