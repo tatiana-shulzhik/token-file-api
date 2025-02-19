@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('./config/app-config');
 const authRoutes = require('./routes/auth-routes');
+const fileRoutes = require('./routes/file-routes');
 const { sequelize } = require('./config/sequelize');
 
 const PORT = config.PORT || 3000;
@@ -14,6 +15,7 @@ sequelize.authenticate()
 app.use(bodyParser.json());
 
 app.use('/', authRoutes);
+app.use('/file', fileRoutes);
 
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту: ${PORT}`);
