@@ -1,6 +1,5 @@
 const { Sequelize } = require('sequelize');
-const config = require('./app-сonfig');
-const userModel = require("../entities/user-entity");
+const config = require('./app-config');
 
 const sequelize = new Sequelize({
   username: config.MYSQL_USER,

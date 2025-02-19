@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
-const config = require('./config/app-сonfig');
+const config = require('./config/app-config');
 const { sequelize } = require('./config/sequelize');
 
 const PORT = config.PORT || 3000;
