@@ -1,5 +1,6 @@
 const fileListDto = require('../dtos/file-list.dto');
 const fileService = require('../services/file-service');
+const responseHelper = require('../utils/response-helper');
 
 exports.uploadFile = async (req, res) => {
   try {
@@ -9,10 +10,10 @@ exports.uploadFile = async (req, res) => {
     const newFile = await fileService.uploadFile(file, userId);
 
     return responseHelper.sendResponse(res, 200, 'File uploaded successfully', {
-      name: updatedFile.name,
-      extension: updatedFile.extension,
-      mimeType: updatedFile.mimeType,
-      size: updatedFile.size,
+      name: newFile.name,
+      extension: newFile.extension,
+      mimeType: newFile.mimeType,
+      size: newFile.size,
     });
   } catch (error) {
     console.error(error);

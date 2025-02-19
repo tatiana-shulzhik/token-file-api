@@ -37,6 +37,20 @@ services:
     command: server /data --address :9000 --console-address :9001
     restart: always
 
+  token-file-api:
+    container_name: token-file-api
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:3000"
+    volumes:
+      - ./:/usr/src/token-file-api
+    depends_on:
+      - mysql
+    command: sh -c "npm install && npm run migrate && npm start"
+
 volumes:
   mysql_data:
   minio_data:
