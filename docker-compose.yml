@@ -1,0 +1,56 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - ${MYSQL_PORT}:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "8080:80"
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
+    command: server /data --address :9000 --console-address :9001
+    restart: always
+
+  token-file-api:
+    container_name: token-file-api
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:3000"
+    volumes:
+      - ./:/usr/src/token-file-api
+    depends_on:
+      - mysql
+    command: sh -c "npm install && npm run migrate && npm start"
+
+volumes:
+  mysql_data:
+  minio_data:
