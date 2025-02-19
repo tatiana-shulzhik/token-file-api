@@ -1,6 +1,7 @@
 const authService = require('../services/auth-service');
 const responseHelper = require('../utils/response-helper');
 const authDto = require('../dtos/auth.dto');
+const { refreshTokenValidationDto } = require('../dtos/token-validation.dto');
 
 exports.register = async (req, res) => {
     const { email, password } = req.body;
@@ -41,9 +42,10 @@ exports.login = async (req, res) => {
 
 exports.refreshToken = async (req, res) => {
     const { refreshToken } = req.body;
+    const { error } = refreshTokenValidationDto.validate({ refreshToken });
 
-    if (!refreshToken) {
-        return responseHelper.sendResponse(res, 400, 'Refresh token обязателен');
+    if (error) {
+        return responseHelper.sendResponse(res, 400, 'Ошибка валидации', { error: error.details[0].message });
     }
 
     const result = await authService.refreshAccessToken(refreshToken);
@@ -59,11 +61,26 @@ exports.profile = async (req, res) => {
     const user = await authService.getUserProfile(req.user.userId);
 
     if (!user) {
-        return res.status(404).json({ message: 'Пользователь не найден' });
+        return responseHelper.sendResponse(res, 404, 'Пользователь не найден');
     }
 
     res.json({ userId: user.id });
 };
 
+exports.logout = async (req, res) => {
+    const { refreshToken } = req.body;
+    const { error } = refreshTokenValidationDto.validate({ refreshToken });
 
+    if (error) {
+        return responseHelper.sendResponse(res, 400, 'Ошибка валидации', { error: error.details[0].message });
+    }
+
+    const result = await authService.logout(refreshToken);
+
+    if (!result.success) {
+        return responseHelper.sendResponse(res, 401, result.message);
+    }
+
+    return responseHelper.sendResponse(res, 200, result.message);
+};
 
